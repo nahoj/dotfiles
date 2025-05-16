@@ -12,4 +12,3 @@ if [ -d "$HOME/.sdkman" ]; then
 fi
 
 PATH="$HOME/bin:$HOME/.local/bin:$PATH"
-
