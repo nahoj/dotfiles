@@ -9,7 +9,7 @@ fi
 
 
 
-# Oh My Zsh configuration
+# Oh-My-Zsh configuration
 
 # Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
@@ -76,7 +76,7 @@ plugins=(
     dirhistory
     fzf-tab
     git
-#     pip
+    poetry
     systemd
     zoxide
     # show suggestions while typing
@@ -181,14 +181,34 @@ auto_print(){
 }
 add-zsh-hook preexec auto_print
 
+alias 1pen='0pen -n 1'
+
 alias as='PAGER=cat apt search'
 alias asn='as -n'
 
+cv() { files=(${"${(@f)$(xsel -bo)}"#file://}); print -rl -- $files }
 alias dd='dd status=progress'
+# alias emacs='emacs -nw -r'
+
+fz() {
+    local f command
+    f=$(find * -type f | fzf) || return
+    if [[ -n $f ]]; then
+        command="$@ ${(qqq)f}"
+    else
+        command="$@ "
+    fi
+    print -rz $command
+#   command="$@ ${(q)$(find -type f | fzy)}"
+#   print -s $command
+#   eval $command
+}
+compdef _command fz
 
 alias gco='git checkout'
 alias gdi='git diff'
 alias ggrep='PAGER=cat git grep -n'
+gko() { git diff "$@" | kompare - }
 alias gst='git status'
 
 alias l='eza'
@@ -196,8 +216,14 @@ alias la='eza --all --group-directories-first'
 alias ll='la --long --git'
 
 alias logoutkde='qdbus org.kde.ksmserver /KSMServer logout 0 0 1'
+
+ma() { playtag mpv -vo null $@ }
+mvi() { playtag mpv -fs $@ }
+
 alias o='xdg-open'
+alias ocaml='rlwrap ocaml'
 alias p='python3'
+alias pe='playtag e'
 alias pgrep='pgrep -a'
 alias rename='file-rename -d'
 alias rip='rg -in'
@@ -229,6 +255,9 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
+# OPAM configuration
+. "$HOME/.opam/opam-init/init.zsh" > /dev/null 2> /dev/null || true
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
@@ -236,3 +265,16 @@ export NVM_DIR="$HOME/.nvm"
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
 
+export TSS_DEBUG=x
+autoload -U tss
+# Array variables named tss_tags_* are added to tag suggestions for tss add
+local tss_tags_ratings=(1star 2star 3star 4star 5star)
+# local tss_tags_media=(toread reading read towatch watched)
+# local tss_tags_workflow=(todo draft done published)
+# local tss_tags_life=(family friends personal school vacation work other)
+
+
+
+if [ -f "$HOME/.zpostrc.zsh" ]; then
+  . "$HOME/.zpostrc.zsh"
+fi

@@ -1,0 +1,1 @@
+/home/jg/.p10k.classic-dark.zsh
