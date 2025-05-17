@@ -275,6 +275,7 @@ local tss_tags_ratings=(1star 2star 3star 4star 5star)
 # local tss_tags_workflow=(todo draft done published)
 # local tss_tags_life=(family friends personal school vacation work other)
 
+eval "$(zoxide init zsh)"
 
 
 if [ -f "$HOME/.zpostrc.zsh" ]; then
