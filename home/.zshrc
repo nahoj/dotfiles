@@ -157,13 +157,13 @@ bindkey "^[[1;5D" backward-word
 
 # User configuration
 
-export MANPATH="/usr/local/man:$MANPATH"
-
-export EDITOR='lite'
-
-
 setopt pushd_silent
 unsetopt nomatch share_history
+
+
+export EDITOR='lite'
+export PYTHONSTARTUP=$HOME/.homesick/repos/dotfiles/other/pythonstartup.py
+
 
 # <TAB>
 # Non pertinent car fzf-tab, je pense.
@@ -210,6 +210,8 @@ alias gdi='git diff'
 alias ggrep='PAGER=cat git grep -n'
 gko() { git diff "$@" | kompare - }
 alias gst='git status'
+
+alias hs='homeshick'
 
 alias l='eza'
 alias la='eza --all --group-directories-first'

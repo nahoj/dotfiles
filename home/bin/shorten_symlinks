@@ -1,0 +1,206 @@
+#!/usr/bin/env bash
+#
+# shorten_symlinks - Shortens symlink chains by making them point directly to final targets
+#
+# Usage: shorten_symlinks [options] file1 [file2 ...]
+#
+# Options:
+#   -h, --help      Show this help message and exit
+#   -n, --dry-run   Show what would be done without actually making changes
+#   -d, --debug     Print debugging information
+
+# Note: We intentionally removed "set -e" as it might be causing early exits
+
+# Default options
+DRY_RUN=0
+DEBUG=0
+
+# Function to print usage information
+show_help() {
+  cat << EOF
+Usage: $(basename "$0") [options] file1 [file2 ...]
+
+Shortens symlink chains by making them point directly to their final targets.
+For example, a symlink chain a->b->c will be rewritten as a->c.
+Uses relative paths for the new symlinks.
+
+Options:
+  -h, --help      Show this help message and exit
+  -n, --dry-run   Show what would be done without actually making changes
+  -d, --debug     Print debugging information
+
+Examples:
+  $(basename "$0") symlink1 symlink2          # Shorten two symlinks
+  $(basename "$0") -n *                       # Dry run for all items in current directory
+EOF
+}
+
+debug() {
+  if [ "$DEBUG" -eq 1 ]; then
+    echo "DEBUG: $1" >&2
+  fi
+}
+
+# Function to convert an absolute path to a relative path
+to_relative_path() {
+  local target="$1"
+  local symlink_dir="$(dirname "$(realpath -s "$2")")"
+
+  # If realpath is available with --relative-to option (GNU coreutils)
+  if realpath --help 2>&1 | grep -q -- "--relative-to"; then
+    realpath --relative-to="$symlink_dir" "$target"
+  else
+    # Fallback to Python if realpath doesn't support --relative-to
+    python3 -c "import os.path; print(os.path.relpath('$target', '$symlink_dir'))" 2>/dev/null || \
+    python -c "import os.path; print(os.path.relpath('$target', '$symlink_dir'))" 2>/dev/null || \
+    # Last resort fallback - keep absolute path
+    echo "$target"
+  fi
+}
+
+# Process command line options
+FILES=()
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -h|--help)
+      show_help
+      exit 0
+      ;;
+    -n|--dry-run)
+      DRY_RUN=1
+      shift
+      ;;
+    -d|--debug)
+      DEBUG=1
+      shift
+      ;;
+    -*)
+      echo "Unknown option: $1" >&2
+      show_help
+      exit 1
+      ;;
+    *)
+      FILES+=("$1")
+      shift
+      ;;
+  esac
+done
+
+# Check if we have arguments
+if [ ${#FILES[@]} -eq 0 ]; then
+  show_help
+  exit 1
+fi
+
+debug "Number of files to process: ${#FILES[@]}"
+for idx in "${!FILES[@]}"; do
+  debug "File $idx: ${FILES[$idx]}"
+done
+
+# Initialize counters
+SUCCESS=0
+FAILED=0
+SKIPPED=0
+
+echo "Starting to process ${#FILES[@]} files..."
+
+# Process each file
+for file in "${FILES[@]}"; do
+  debug "Processing file: $file"
+
+  # Check if file exists
+  if [ ! -e "$file" ] && [ ! -L "$file" ]; then
+    echo "Error: $file does not exist" >&2
+    debug "File doesn't exist, skipping"
+    ((FAILED++))
+    continue
+  fi
+
+  # Check if it's a symlink
+  if [ ! -L "$file" ]; then
+    echo "Warning: $file is not a symlink, skipping" >&2
+    debug "Not a symlink, skipping"
+    ((SKIPPED++))
+    continue
+  fi
+
+  # Get the original direct target
+  ORIGINAL=$(readlink "$file" || echo "ERROR")
+  if [ "$ORIGINAL" = "ERROR" ]; then
+    echo "Error: Could not read link target for $file" >&2
+    debug "Failed to read link target"
+    ((FAILED++))
+    continue
+  fi
+
+  # Get the final target
+  FINAL=$(readlink -f "$file" || echo "ERROR")
+  if [ "$FINAL" = "ERROR" ]; then
+    echo "Error: Could not determine final target for $file" >&2
+    debug "Failed to determine final target"
+    ((FAILED++))
+    continue
+  fi
+
+  debug "Original target: $ORIGINAL"
+  debug "Final target: $FINAL"
+
+  # Convert final target to relative path
+  RELATIVE_FINAL=$(to_relative_path "$FINAL" "$file")
+  debug "Relative final target: $RELATIVE_FINAL"
+
+  # If original already points to the final target or is the final target, skip
+  if [ "$ORIGINAL" = "$FINAL" ] || [ "$ORIGINAL" = "$RELATIVE_FINAL" ]; then
+    echo "$file already points directly to final target ($FINAL)"
+    debug "Already points to final target"
+    ((SKIPPED++))
+    continue
+  fi
+
+  # Check if final target exists
+  if [ ! -e "$FINAL" ]; then
+    echo "Warning: Final target $FINAL doesn't exist (broken symlink chain)" >&2
+    debug "Broken symlink chain, but continuing"
+    # Continue anyway
+  fi
+
+  if [ "$DRY_RUN" -eq 1 ]; then
+    echo "Would shorten: $file -> $RELATIVE_FINAL (currently $file -> $ORIGINAL)"
+    debug "Dry run - would shorten this symlink"
+    ((SUCCESS++))
+    continue
+  fi
+
+  # Remove the original symlink and create a new one
+  if ! rm "$file"; then
+    echo "Error: Failed to remove original symlink $file" >&2
+    debug "Failed to remove original symlink"
+    ((FAILED++))
+    continue
+  fi
+
+  if ! ln -s "$RELATIVE_FINAL" "$file"; then
+    echo "Error: Failed to create new symlink $file -> $RELATIVE_FINAL" >&2
+    debug "Failed to create new symlink"
+    # Try to restore the original symlink
+    ln -s "$ORIGINAL" "$file" 2>/dev/null || true
+    ((FAILED++))
+    continue
+  fi
+
+  echo "Shortened: $file -> $RELATIVE_FINAL (was $file -> $ORIGINAL)"
+  debug "Successfully shortened symlink"
+  ((SUCCESS++))
+done
+
+# Print summary with detailed counts
+echo "Summary: Shortened $SUCCESS symlink(s), skipped $SKIPPED, failed $FAILED"
+debug "SUCCESS=$SUCCESS SKIPPED=$SKIPPED FAILED=$FAILED"
+
+# Return appropriate exit code
+if [ $FAILED -gt 0 ]; then
+  exit 1
+else
+  exit 0
+fi
