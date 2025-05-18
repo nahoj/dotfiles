@@ -1,4 +1,5 @@
-export X_STARTUP_FILES="$X_STARTUP_FILES#  ~/.zshrc  "
+X_STARTUP_FILES="$X_STARTUP_FILES#  ~/.zshrc  "
+x_startup_log+=$(echo Running .zshrc|ts "%H:%M:%.S")
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
@@ -7,9 +8,22 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+source "$HOME/.homesick/repos/homeshick/homeshick.sh"
+fpath=($HOME/.homesick/repos/homeshick/completions $fpath)
+
+if [[ -d "$HOME/.local/share/zsh/generated_man_completions" ]]; then
+  fpath+=("$HOME/.local/share/zsh/generated_man_completions")
+fi
+
+fpath+="$HOME/.local/share/zsh/site-functions"
+
+# <TAB> complete just what's before the cursor, ignoring anything after
+bindkey '^i' expand-or-complete-prefix
+
 
 
 # Oh-My-Zsh configuration
+x_startup_log+=$(echo Running Oh-My-Zsh...|ts "%H:%M:%.S")
 
 # Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
@@ -47,7 +61,7 @@ HYPHEN_INSENSITIVE="true"
 # You can also set it to another string to have that shown instead of the default red dots.
 # e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
 # Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
-COMPLETION_WAITING_DOTS="true"
+# COMPLETION_WAITING_DOTS="true"
 
 # Uncomment the following line if you want to disable marking untracked files
 # under VCS as dirty. This makes repository status check for large repositories
@@ -74,9 +88,12 @@ plugins=(
     colored-man-pages
     colorize
     dirhistory
+    # "fzf-tab is shipped with a binary module to speed up this process. You
+    # can build it with build-fzf-tab-module, then it will be enabled
+    # automatically."
     fzf-tab
     git
-    poetry
+#     poetry
     systemd
     zoxide
     # show suggestions while typing
@@ -85,28 +102,29 @@ plugins=(
     zsh-history-substring-search
     # highlight incorrect/correct commands while typing
     zsh-syntax-highlighting
+
+    # My own
+    yazi-file-chooser
 )
 
-fpath+="$HOME/.local/share/zsh/site-functions"
-
-source "$HOME/.homesick/repos/homeshick/homeshick.sh"
-fpath=($HOME/.homesick/repos/homeshick/completions $fpath)
-
 fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
-
 autoload -U compinit && compinit
 
 source $ZSH/oh-my-zsh.sh
-
+x_startup_log+=$(echo Done.|ts "%H:%M:%.S")
 
 
 # Insanet configuration
 # https://insanet.eu/post/supercharge-your-terminal/
 
+my_fzf_completion_opts='--bind=ctrl-z:ignore,btab:up,tab:down,space:accept --cycle --tiebreak=begin'
+
 export FZF_DEFAULT_COMMAND='rg --no-messages --files --no-ignore --hidden --follow --glob "!.git/*"'
 export FZF_DEFAULT_OPTS="--no-separator --layout=reverse --inline-info"
 # zoxide directory preview options
-export _ZO_FZF_OPTS="--no-sort --keep-right --height=50% --info=inline --layout=reverse --exit-0 --select-1 --bind=ctrl-z:ignore --preview='\command exa --long --all {2..}' --preview-window=right"
+export _ZO_FZF_OPTS="$my_fzf_completion_opts --no-sort --keep-right \
+--height=50% --info=inline --layout=reverse --exit-0 --select-1 \
+--preview='\command fzf-preview-file.sh {2..}' --preview-window=right "
 
 #history
 HISTFILE="${ZDOTDIR:-$HOME}/.zsh_history"       # The path to the history file.
@@ -128,11 +146,17 @@ setopt HIST_VERIFY               # Do not execute immediately upon history expan
 
 # set list-colors to enable filename colorizing
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
+zstyle ':fzf-tab:complete:*' fzf-preview 'fzf-preview-file.sh $realpath'
+# zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
 zstyle ':fzf-tab:complete:systemctl-*:*' fzf-preview 'SYSTEMD_COLORS=1 systemctl status $word'
 zstyle ':fzf-tab:complete:tldr:argument-1' fzf-preview 'tldr --color always $word'
-# switch group using `,` and `.`
-zstyle ':fzf-tab:*' switch-group ',' '.'
+# custom fzf flags
+# NOTE: fzf-tab does not follow FZF_DEFAULT_OPTS by default
+zstyle ':fzf-tab:*' fzf-flags ${(z)my_fzf_completion_opts}
+# fzf-tab key bindings
+zstyle ':fzf-tab:*' continuous-trigger 'right'
+zstyle ':fzf-tab:*' print-query left
+zstyle ':fzf-tab:*' switch-group ',' ';'
 # exclude .. and . from completion
 zstyle ':completion:*' special-dirs false
 # show hidden files in completion
@@ -155,19 +179,24 @@ bindkey "^[[1;5D" backward-word
 
 
 
-# User configuration
+# My configuration
 
 setopt pushd_silent
 unsetopt nomatch share_history
 
+if [ -n $WAYLAND_DISPLAY$DISPLAY ]; then
+  export EDITOR='lite'
+else
+  export EDITOR='emacs'
+fi
 
-export EDITOR='lite'
-export PYTHONSTARTUP=$HOME/.homesick/repos/dotfiles/other/pythonstartup.py
+#export MANPATH="/usr/local/man:$MANPATH"
 
 
-# <TAB>
-# Non pertinent car fzf-tab, je pense.
-#bindkey '^i' expand-or-complete-prefix
+alias 1pen='0pen -n 1'
+
+alias as='PAGER=cat apt search'
+alias asn='as -n'
 
 autoload -U add-zsh-hook
 auto_print(){
@@ -180,11 +209,6 @@ auto_print(){
   fi
 }
 add-zsh-hook preexec auto_print
-
-alias 1pen='0pen -n 1'
-
-alias as='PAGER=cat apt search'
-alias asn='as -n'
 
 cv() { files=(${"${(@f)$(xsel -bo)}"#file://}); print -rl -- $files }
 alias dd='dd status=progress'
@@ -199,9 +223,6 @@ fz() {
         command="$@ "
     fi
     print -rz $command
-#   command="$@ ${(q)$(find -type f | fzy)}"
-#   print -s $command
-#   eval $command
 }
 compdef _command fz
 
@@ -224,7 +245,10 @@ mvi() { playtag mpv -fs $@ }
 
 alias o='xdg-open'
 alias ocaml='rlwrap ocaml'
+
+export PYTHONSTARTUP=$HOME/.homesick/repos/dotfiles/other/pythonstartup.py
 alias p='python3'
+
 alias pe='playtag e'
 alias pgrep='pgrep -a'
 alias rename='file-rename -d'
@@ -253,12 +277,16 @@ bindkey '^[^M' _sgpt_zsh
 
 
 
+x_startup_log+=$(echo Running post-init...|ts "%H:%M:%.S")
+
+[[ -s "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
+
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # OPAM configuration
-. "$HOME/.opam/opam-init/init.zsh" > /dev/null 2> /dev/null || true
+[[ -s "$HOME/.opam/opam-init/init.zsh" ]] && . "$HOME/.opam/opam-init/init.zsh" > /dev/null 2> /dev/null || true
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
@@ -278,6 +306,8 @@ local tss_tags_ratings=(1star 2star 3star 4star 5star)
 eval "$(zoxide init zsh)"
 
 
-if [ -f "$HOME/.zpostrc.zsh" ]; then
+if [[ -s "$HOME/.zpostrc.zsh" ]]; then
   . "$HOME/.zpostrc.zsh"
 fi
+
+x_startup_log+=$(echo Done.|ts "%H:%M:%.S")
