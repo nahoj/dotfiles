@@ -13,7 +13,7 @@
 
 # Parse input
 if [[ $# -gt 1 ]]; then
-  echo $@
+  echo "$@"
   >&2 echo "usage: $0 FILENAME[:LINENO][:IGNORED]"
   exit 1
 fi
