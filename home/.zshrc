@@ -210,6 +210,7 @@ auto_print(){
 }
 add-zsh-hook preexec auto_print
 
+alias cursor='~/AppImages/cursor.AppImage --no-sandbox'
 cv() { files=(${"${(@f)$(xsel -bo)}"#file://}); print -rl -- $files }
 alias dd='dd status=progress'
 # alias emacs='emacs -nw -r'
@@ -240,8 +241,8 @@ alias ll='la --long --git'
 
 alias logoutkde='qdbus org.kde.ksmserver /KSMServer logout 0 0 1'
 
-ma() { playtag mpv -vo null $@ }
-mvi() { playtag mpv -fs $@ }
+alias ma='mpv -vo null'
+alias mvi='mpv -fs'
 
 alias o='xdg-open'
 alias ocaml='rlwrap ocaml'
@@ -294,6 +295,8 @@ export NVM_DIR="$HOME/.nvm"
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+eval "$(task --completion zsh)"
 
 export TSS_DEBUG=x
 autoload -U tss
