@@ -292,11 +292,13 @@ export NVM_DIR="$HOME/.nvm"
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
+which rbenv > /dev/null && eval "$(rbenv init -)"
+
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
 
-eval "$(task --completion zsh)"
+which task > /dev/null && eval "$(task --completion zsh)"
 
 export TSS_DEBUG=x
 autoload -U tss
@@ -306,7 +308,7 @@ local tss_tags_ratings=(1star 2star 3star 4star 5star)
 # local tss_tags_workflow=(todo draft done published)
 # local tss_tags_life=(family friends personal school vacation work other)
 
-eval "$(zoxide init zsh)"
+which zoxide > /dev/null && eval "$(zoxide init zsh)"
 
 
 if [[ -s "$HOME/.zpostrc.zsh" ]]; then
