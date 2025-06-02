@@ -214,6 +214,7 @@ alias cursor='~/AppImages/cursor.AppImage --no-sandbox'
 cv() { files=(${"${(@f)$(xsel -bo)}"#file://}); print -rl -- $files }
 alias dd='dd status=progress'
 # alias emacs='emacs -nw -r'
+alias fd='fdfind'
 
 fz() {
     local f command
@@ -256,26 +257,37 @@ alias rename='file-rename -d'
 alias rip='rg -in'
 alias rsync='rsync --info=progress2'
 
+
+# Shell-GPT integration ZSH v0.2
+_sgpt_zsh() {
+if [[ -n "$BUFFER" ]]; then
+    _sgpt_prev_cmd=$BUFFER
+    BUFFER+=" ⌛"
+    zle -I && zle redisplay
+    BUFFER=$(sgpt --shell <<< "$_sgpt_prev_cmd" --no-interaction)
+    zle end-of-line
+fi
+}
+zle -N _sgpt_zsh
+# Alt+i
+bindkey '^[i' _sgpt_zsh
+# Shell-GPT integration ZSH v0.2
+
 AI() {
   print -rz -- $(sgpt --shell --no-interaction <<< "$*")
 }
 
-_sgpt_zsh() {
+_my_sgpt_zsh() {
   if [[ -n "$BUFFER" ]]; then
     local nohash=${BUFFER#'# '}
     print -s "# $nohash"
     BUFFER=" AI ${(qqq)nohash}"
     zle accept-line
-    # local _sgpt_prev_cmd=$BUFFER
-    # BUFFER+="⌛"
-    # zle -I && zle redisplay
-    # BUFFER=$(sgpt --shell <<< "$_sgpt_prev_cmd")
-    # zle end-of-line
   fi
 }
-zle -N _sgpt_zsh
-bindkey '^[^M' _sgpt_zsh
-
+zle -N _my_sgpt_zsh
+# Alt+Enter
+bindkey '^[^M' _my_sgpt_zsh
 
 
 x_startup_log+=$(echo Running post-init...|ts "%H:%M:%.S")
