@@ -1,0 +1,29 @@
+#!/bin/bash
+
+case $1/$2 in
+post/*)
+  # Run powerdevil restart asynchronously to not block wakeup
+  (
+    # Find the user session first
+    for session in $(loginctl list-sessions --no-legend | awk '{print $1}'); do
+      session_user=$(loginctl show-session $session -p Name --value)
+      if [ "$session_user" = "jg" ]; then
+        export XDG_RUNTIME_DIR="/run/user/$(id -u jg)"
+
+        # Wait for external monitors to come online (max 10 seconds)
+        for i in {1..10}; do
+          # Check if external monitors are connected (exclude laptop screen)
+          if sudo -u jg WAYLAND_DISPLAY=wayland-0 kscreen-doctor -o 2>/dev/null | grep -E 'Output: [^e]+$' -A 4 | grep -q connected; then
+            sleep 1 # Brief additional delay for stability
+            break
+          fi
+          sleep 1
+        done
+
+        sudo -u jg systemctl --user restart plasma-powerdevil
+        break
+      fi
+    done
+  ) &
+  ;;
+esac
