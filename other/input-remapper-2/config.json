@@ -1,0 +1,10 @@
+{
+    "version": "2.1.1",
+    "autoload": {
+        "Logitech K800": "new preset",
+        "MX Keys Mini Keyboard": "new preset",
+        "MX Keys Mini": "new preset",
+        "Logitech USB Receiver": "new preset",
+        "AT Translated Set 2 keyboard": "Portable boulot"
+    }
+}
