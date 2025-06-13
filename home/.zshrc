@@ -245,6 +245,7 @@ alias logoutkde='qdbus org.kde.ksmserver /KSMServer logout 0 0 1'
 alias ma='mpv -vo null'
 alias mvi='mpv -fs'
 
+alias mvn='./mvnw'
 alias o='xdg-open'
 alias ocaml='rlwrap ocaml'
 
