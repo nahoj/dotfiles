@@ -248,12 +248,13 @@ alias mvi='mpv -fs'
 alias mvn='./mvnw'
 alias o='xdg-open'
 alias ocaml='rlwrap ocaml'
+alias pe='playtag e'
+alias pgrep='pgrep -a'
 
 export PYTHONSTARTUP=$HOME/.homesick/repos/dotfiles/other/pythonstartup.py
 alias p='python3'
+alias pipx='pipx --system-site-packages'
 
-alias pe='playtag e'
-alias pgrep='pgrep -a'
 alias rename='file-rename -d'
 alias rip='rg -in'
 alias rsync='rsync --info=progress2'
