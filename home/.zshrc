@@ -15,8 +15,6 @@ if [[ -d "$HOME/.local/share/zsh/generated_man_completions" ]]; then
   fpath+=("$HOME/.local/share/zsh/generated_man_completions")
 fi
 
-fpath+="$HOME/.local/share/zsh/site-functions"
-
 # <TAB> complete just what's before the cursor, ignoring anything after
 bindkey '^i' expand-or-complete-prefix
 
