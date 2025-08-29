@@ -1,6 +1,8 @@
 X_STARTUP_FILES="$X_STARTUP_FILES#  ~/.zshrc  "
 x_startup_log+=$(echo Running .zshrc|ts "%H:%M:%.S")
 
+eval "$(direnv hook zsh)" # Can be low and moves the prompt down when finished
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.

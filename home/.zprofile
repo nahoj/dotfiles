@@ -24,8 +24,6 @@ if [[ -d "$HOME/.cargo" ]]; then
   path=("$HOME/.cargo/bin" $path)
 fi
 
-eval "$(direnv hook zsh)"
-
 if [[ -s "$HOME/.nvm/alias/default" ]]; then
   default=$(cat "$HOME/.nvm/alias/default")
   path=("$(print -rl -- $HOME/.nvm/versions/node/v$default*/bin(On) | head -n 1)" $path)
