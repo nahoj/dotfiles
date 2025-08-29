@@ -256,7 +256,6 @@ alias pgrep='pgrep -a'
 
 export PYTHONSTARTUP=$HOME/.homesick/repos/dotfiles/other/pythonstartup.py
 alias p='python3'
-alias pipx='pipx --system-site-packages'
 
 alias rename='file-rename -d'
 alias rip='rg -in'
