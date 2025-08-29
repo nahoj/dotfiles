@@ -1,0 +1,3 @@
+# Disable wake for Logitech Logi Bolt receiver (046d:c548)
+SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTR{idVendor}=="046d", ATTR{idProduct}=="c548", \
+  TEST=="power/wakeup", RUN+="/bin/sh -c 'echo disabled > /sys$devpath/power/wakeup'"

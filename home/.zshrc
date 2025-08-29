@@ -87,7 +87,6 @@ HYPHEN_INSENSITIVE="true"
 plugins=(
     colored-man-pages
     colorize
-    # not `direnv`, it's run in .zprofile
     dirhistory
     # "fzf-tab is shipped with a binary module to speed up this process. You
     # can build it with build-fzf-tab-module, then it will be enabled
