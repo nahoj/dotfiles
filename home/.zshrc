@@ -85,13 +85,14 @@ HYPHEN_INSENSITIVE="true"
 plugins=(
     colored-man-pages
     colorize
+    # not `direnv`, it's run in .zprofile
     dirhistory
     # "fzf-tab is shipped with a binary module to speed up this process. You
     # can build it with build-fzf-tab-module, then it will be enabled
     # automatically."
     fzf-tab
     git
-#     poetry
+    mvn-completion-only
     systemd
     zoxide
     # show suggestions while typing
@@ -237,13 +238,15 @@ alias hs='homeshick'
 alias l='eza'
 alias la='eza --all --group-directories-first'
 alias ll='la --long --git'
+alias lla=ll
 
+alias less='less -R'
 alias logoutkde='qdbus org.kde.ksmserver /KSMServer logout 0 0 1'
 
 alias ma='mpv -vo null'
 alias mvi='mpv -fs'
 
-alias mvn='./mvnw'
+alias mvn='mvnd'
 alias o='xdg-open'
 alias ocaml='rlwrap ocaml'
 alias pe='playtag e'
