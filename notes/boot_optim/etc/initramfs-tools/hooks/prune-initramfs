@@ -19,51 +19,54 @@ rm -f "${DESTDIR}/usr/lib/udev/rules.d"/99-usb-wakeup-block-logibolt.rules 2>/de
 rm -rf "${DESTDIR}/scripts/casper-bottom" 2>/dev/null || true
 rm -rf "${DESTDIR}/scripts/casper-premount" 2>/dev/null || true
 
-# Write an initramfs-only modprobe blacklist
-mkdir -p "${DESTDIR}/etc/modprobe.d"
-cat > "${DESTDIR}/etc/modprobe.d/blacklist-initramfs.conf" <<'EOF'
-# Only inside initramfs — defer KMS
 
-# Chelsio NICs (not needed for boot)
-blacklist cxgb3
-blacklist cxgb4
-blacklist libcxgb
-blacklist cxgb3i
-blacklist cxgb4i
-blacklist libcxgbi
+# The module blacklist is made redundant by the modules file with MODULES=list in /etc/initramfs-tools/initramfs.conf:
 
-# iSCSI (not needed unless you boot from iSCSI)
-blacklist iscsi_tcp
-blacklist libiscsi
-blacklist libiscsi_tcp
-blacklist scsi_transport_iscsi
-blacklist iscsi_ibft
-
-# GPU drivers (load after unlock)
-blacklist i915
-blacklist nvidia
-blacklist nvidia_drm
-blacklist nvidia_modeset
-blacklist nvidia_uvm
-blacklist xe
-
-# Media/CEC/RC (not needed for cryptsetup)
-blacklist cec
-blacklist rc-core
-
-# The WMI spam (1.920–1.922s) and MEI (1.959s) serve no purpose before unlock.
-blacklist mei_me
-blacklist mei_wdt
-
-# Sound (not needed in initramfs)
-blacklist snd_hda_intel
-blacklist snd_usb_audio
-blacklist snd_soc_skl
-
-# Thunderbolt (unless you boot from it)
-blacklist thunderbolt
-
-# Misc
-blacklist mac_hid
-blacklist psmouse
-EOF
+## Write an initramfs-only modprobe blacklist
+#mkdir -p "${DESTDIR}/etc/modprobe.d"
+#cat > "${DESTDIR}/etc/modprobe.d/blacklist-initramfs.conf" <<'EOF'
+## Only inside initramfs — defer KMS
+#
+## Chelsio NICs (not needed for boot)
+#blacklist cxgb3
+#blacklist cxgb4
+#blacklist libcxgb
+#blacklist cxgb3i
+#blacklist cxgb4i
+#blacklist libcxgbi
+#
+## iSCSI (not needed unless you boot from iSCSI)
+#blacklist iscsi_tcp
+#blacklist libiscsi
+#blacklist libiscsi_tcp
+#blacklist scsi_transport_iscsi
+#blacklist iscsi_ibft
+#
+## GPU drivers (load after unlock)
+#blacklist i915
+#blacklist nvidia
+#blacklist nvidia_drm
+#blacklist nvidia_modeset
+#blacklist nvidia_uvm
+#blacklist xe
+#
+## Media/CEC/RC (not needed for cryptsetup)
+#blacklist cec
+#blacklist rc-core
+#
+## The WMI spam (1.920–1.922s) and MEI (1.959s) serve no purpose before unlock.
+#blacklist mei_me
+#blacklist mei_wdt
+#
+## Sound (not needed in initramfs)
+#blacklist snd_hda_intel
+#blacklist snd_usb_audio
+#blacklist snd_soc_skl
+#
+## Thunderbolt (unless you boot from it)
+#blacklist thunderbolt
+#
+## Misc
+#blacklist mac_hid
+#blacklist psmouse
+#EOF

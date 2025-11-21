@@ -1,0 +1,28 @@
+# Storage
+nvme
+vmd
+ahci
+sd_mod
+
+# Root filesystem (pick yours; remove others you don't use)
+ext4
+
+# LUKS/dm-crypt
+dm_mod
+dm_crypt
+aesni_intel
+crypto_simd
+cryptd
+crc32c_intel
+
+# Keyboard for passphrase
+usbhid
+hid_generic
+hid
+atkbd
+i8042
+serio_raw
+
+# USB host (external keyboards)
+xhci_pci
+ehci_pci
