@@ -15,6 +15,10 @@ unset QT_IM_MODULE
 export NO_AT_BRIDGE=1
 
 
+# Silence a warning when running mpv
+PIPEWIRE_DEBUG=0
+
+
 # Some environment setup so that graphical apps in the session can see
 # node, Java, etc.
 # But no full nvm/sdkman init scripts, to speed up session startup (they do
