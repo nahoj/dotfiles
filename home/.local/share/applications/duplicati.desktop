@@ -1,0 +1,18 @@
+[Desktop Entry]
+Categories=System;Archiving;FileTools;Filesystem;
+Comment=Create and maintain local and remote backup copies of your data
+TryExec=duplicati
+# pour vérifier que c'est bien appliqué :
+# cat /proc/98762/environ | tr '\0' '\n' | grep DOTNET
+Exec=env DOTNET_GC_Server=0 DOTNET_GC_HeapHardLimit=1024M duplicati
+GenericName=Backup tool
+Icon=duplicati
+Name=Duplicati
+Path=
+PrefersNonDefaultGPU=false
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-KDE-SubstituteUID=false
+X-KDE-Username=
