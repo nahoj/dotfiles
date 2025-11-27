@@ -1,3 +1,6 @@
+# Display for KVM
+i915
+
 # Storage
 nvme
 vmd
