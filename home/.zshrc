@@ -261,21 +261,6 @@ alias rip='rg -in'
 alias rsync='rsync --info=progress2'
 
 
-# Shell-GPT integration ZSH v0.2
-_sgpt_zsh() {
-if [[ -n "$BUFFER" ]]; then
-    _sgpt_prev_cmd=$BUFFER
-    BUFFER+=" ⌛"
-    zle -I && zle redisplay
-    BUFFER=$(sgpt --shell <<< "$_sgpt_prev_cmd" --no-interaction)
-    zle end-of-line
-fi
-}
-zle -N _sgpt_zsh
-# Alt+i
-bindkey '^[i' _sgpt_zsh
-# Shell-GPT integration ZSH v0.2
-
 AI() {
   print -rz -- $(sgpt --shell --no-interaction <<< "$*")
 }
@@ -291,6 +276,16 @@ _my_sgpt_zsh() {
 zle -N _my_sgpt_zsh
 # Alt+Enter
 bindkey '^[^M' _my_sgpt_zsh
+
+
+upgrade() {
+    set -xo err_return
+    sudo apt-get upgrade
+    flatpak update
+    (( $RANDOM % 5 == 0 ))
+    npm update -g
+    pipx upgrade-all
+}
 
 
 x_startup_log+=$(echo Running post-init...|ts "%H:%M:%.S")
