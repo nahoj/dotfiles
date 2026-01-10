@@ -29,8 +29,10 @@ if [[ -d "$HOME/.cargo" ]]; then
 fi
 
 if [[ -s "$HOME/.nvm/alias/default" ]]; then
-  default=$(cat "$HOME/.nvm/alias/default")
-  path=("$(print -rl -- $HOME/.nvm/versions/node/v$default*/bin(On) | head -n 1)" $path)
+  default=$(<"$HOME/.nvm/alias/default")
+  # Reverse numeric order; don't print the pattern if none match
+  nodebin=($HOME/.nvm/versions/node/v${default}*/bin(OnN))
+  [[ -n $nodebin ]] && path=($nodebin[1] $path)
 fi
 
 if [[ -d "$HOME/.sdkman/candidates/java/current" ]]; then
