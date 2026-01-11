@@ -184,11 +184,7 @@ bindkey "^[[1;5D" backward-word
 setopt pushd_silent
 unsetopt nomatch share_history
 
-if [ -n $WAYLAND_DISPLAY$DISPLAY ]; then
-  export EDITOR='lite'
-else
-  export EDITOR='emacs'
-fi
+export EDITOR='micro'
 
 #export MANPATH="/usr/local/man:$MANPATH"
 
@@ -210,10 +206,8 @@ auto_print(){
 }
 add-zsh-hook preexec auto_print
 
-alias cursor='~/AppImages/cursor.AppImage --no-sandbox'
 cv() { files=(${"${(@f)$(xsel -bo)}"#file://}); print -rl -- $files }
 alias dd='dd status=progress'
-# alias emacs='emacs -nw -r'
 alias fd='fdfind'
 
 fz() {
@@ -235,6 +229,7 @@ gko() { git diff "$@" | kompare - }
 alias gst='git status'
 
 alias hs='homeshick'
+alias htop_setcap='setcap cap_sys_ptrace+ep /usr/bin/htop'
 
 alias l='eza'
 alias la='eza --all --group-directories-first'
