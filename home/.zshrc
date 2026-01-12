@@ -206,7 +206,6 @@ gko() { git diff "$@" | kompare - }
 alias gst='git status'
 
 alias hs='homeshick'
-alias htop_setcap='setcap cap_sys_ptrace+ep /usr/bin/htop'
 
 alias l='eza'
 alias la='eza --all --group-directories-first'
@@ -304,3 +303,4 @@ if [[ -s "$HOME/.zpostrc.zsh" ]]; then
 fi
 
 x_startup_log+=$(echo Done.|ts "%H:%M:%.S")
+export PATH="$HOME/.local/bin:$PATH"
