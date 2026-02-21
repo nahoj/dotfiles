@@ -1,18 +1,18 @@
 {
   "mcpServers": {
-    "git": {
-      "command": "uvx",
-      "args": [
-        "mcp-server-git",
-        "--repository",
-        "~/.cache/dummygitrepo"
-      ]
-    },
-    "sequential-thinking": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-sequential-thinking"
+    "jetbrains": {
+      "serverUrl": "http://localhost:64342/sse",
+      "disabledTools": [
+        "create_new_file",
+        "execute_terminal_command",
+        "find_files_by_glob",
+        "find_files_by_name_keyword",
+        "get_file_text_by_path",
+        "list_directory_tree",
+        "replace_text_in_file",
+        "runNotebookCell",
+        "search_in_files_by_regex",
+        "search_in_files_by_text"
       ]
     }
   }

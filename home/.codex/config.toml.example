@@ -1,0 +1,31 @@
+model = "gpt-5.3-codex"
+sandbox_mode = "workspace-write"
+
+[sandbox_workspace_write]
+network_access = true
+
+[notice.model_migrations]
+"gpt-5.2-codex" = "gpt-5.3-codex"
+
+[mcp_servers.jetbrains]
+command = "/snap/intellij-idea-ultimate/current/jbr/bin/java"
+args = [
+    "-classpath",
+    "/snap/intellij-idea-ultimate/current/plugins/mcpserver/lib/mcpserver-frontend.jar:/snap/intellij-idea-ultimate/current/lib/util-8.jar:/snap/intellij-idea-ultimate/current/lib/module-intellij.libraries.ktor.client.cio.jar:/snap/intellij-idea-ultimate/current/lib/module-intellij.libraries.ktor.client.jar:/snap/intellij-idea-ultimate/current/lib/module-intellij.libraries.ktor.network.tls.jar:/snap/intellij-idea-ultimate/current/lib/module-intellij.libraries.ktor.io.jar:/snap/intellij-idea-ultimate/current/lib/module-intellij.libraries.ktor.utils.jar:/snap/intellij-idea-ultimate/current/lib/module-intellij.libraries.kotlinx.io.jar:/snap/intellij-idea-ultimate/current/lib/module-intellij.libraries.kotlinx.serialization.core.jar:/snap/intellij-idea-ultimate/current/lib/module-intellij.libraries.kotlinx.serialization.json.jar",
+    "com.intellij.mcpserver.stdio.McpStdioRunnerKt",
+]
+disabled_tools = [
+    "create_new_file",
+    "execute_terminal_command",
+    "find_files_by_glob",
+    "find_files_by_name_keyword",
+    "get_file_text_by_path",
+    "list_directory_tree",
+    "replace_text_in_file",
+    "runNotebookCell",
+    "search_in_files_by_regex",
+    "search_in_files_by_text",
+]
+
+[mcp_servers.jetbrains.env]
+IJ_MCP_SERVER_PORT = "64342"
