@@ -261,6 +261,10 @@ upgrade() {
 
 x_startup_log+=$(echo Running post-init...|ts "%H:%M:%.S")
 
+[ -s "/home/jg/.bun/_bun" ] && source "/home/jg/.bun/_bun"
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
 [[ -s "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
 
 export NVM_DIR="$HOME/.nvm"
