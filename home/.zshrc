@@ -41,7 +41,7 @@ HYPHEN_INSENSITIVE="true"
 # You can also set it to another string to have that shown instead of the default red dots.
 # e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
 # Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
-# COMPLETION_WAITING_DOTS="true"
+COMPLETION_WAITING_DOTS="true"
 
 # Uncomment the following line if you want to disable marking untracked files
 # under VCS as dirty. This makes repository status check for large repositories
@@ -219,6 +219,7 @@ alias ma='mpv -vo null'
 alias mvi='mpv -fs'
 
 alias mvn='mvnd'
+alias nano='micro'
 alias o='xdg-open'
 alias ocaml='rlwrap ocaml'
 alias pe='playtag e'
@@ -228,7 +229,13 @@ export PYTHONSTARTUP=$HOME/.homesick/repos/dotfiles/other/pythonstartup.py
 alias p='python3'
 
 alias rename='file-rename -d'
-alias rip='rg -in'
+
+local rgopts='--smart-case'
+alias rga="rga $rgopts"
+alias rg="rga"
+# alias rgu='rgg --pre ~/bin/myuconv'
+#alias ug='ug --filter="*:uconv -f UTF-8 -t UTF-8 -x Latin-ASCII" -j'
+
 alias rsync='rsync --info=progress2'
 
 
