@@ -1,2 +1,2 @@
 #!/usr/bin/dash
-"$NVM_BIN/codex" "$@" && exec zsh
+"$NVM_BIN/codex" "$@" && exec bash
