@@ -183,6 +183,22 @@ auto_print(){
 }
 add-zsh-hook preexec auto_print
 
+claude() {
+    command claude "$@"
+    local ret=$?
+
+    # Remove dummy dotfiles created by the sandbox
+    # https://github.com/anthropics/claude-code/issues/29316
+    # https://github.com/anthropic-experimental/sandbox-runtime/issues/139
+    local artifacts=(.bash_profile .bashrc .gitconfig .gitmodules .mcp.json .profile .ripgreprc .zprofile .zshrc)
+    artifacts+=('config' HEAD hooks objects refs)
+    for f in "${artifacts[@]}"; do
+      [[ -f "$f" && ! -s "$f" ]] && rm -f "$f"
+    done
+
+    return $ret
+}
+
 cv() { files=(${"${(@f)$(xsel -bo)}"#file://}); print -rl -- $files }
 alias dd='dd status=progress'
 alias fd='fdfind'
