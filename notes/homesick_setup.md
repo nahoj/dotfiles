@@ -11,11 +11,6 @@
 2. mkdir ~/.homesick && ln -s ~/projects/homesick ~/.homesick/repos
 3. source ~/.homesick/repos/homeshick/homeshick.sh && homeshick link dotfiles --force
 
-## Homeshick bug fix required
+## Coreutils 0.2.2  dirname bug
 
-homeshick has a bug in lib/fs.sh `abs_path()`: `dirname "/home/user/."` returns
-`/home` instead of `/home/user`, causing broken relative symlinks for all castle
-files.
-
-Fix: in `abs_path()`, when `base` is `.`, `cd` into `$path` directly instead of
-`cd`-ing into `dirname "$path"`. See the patched fs.sh in the homeshick castle.
+Make sure coreutils are either GNU or uutils 0.3+.
